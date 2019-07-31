@@ -20,10 +20,10 @@ const UserSchema = new Schema({
         type: String,
     },
     data: {
-        type: Data,
+        type: Date,
         default: Date.now
     },
 
 })
 
-module.exports = user = mongoose.model("users", UserSchema)
+module.exports = User = mongoose.model("users", UserSchema)

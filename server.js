@@ -11,7 +11,7 @@ const db = require("./config/keys").mongoURL
 
 //使用body-parser中间件
 app.use(bodyParser.urlencoded({extended: false}))
-app.user(bodyParser.json())
+app.use(bodyParser.json())
 
 //Connect to mongodb
 mongoose.connect(db,{ useNewUrlParser: true }
