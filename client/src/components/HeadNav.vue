@@ -7,13 +7,22 @@
       </el-col>
       <el-col :span="6" class="user">
           <div class="userinfo">
-            <img src="user.avatar" alt="" class="avatar">
+            <img :src="user.avatar" alt="" class="avatar">
             <div class="welcome">
               <p class="name comename">欢迎</p>
-              <p class="name avatarname">{{}}</p>
+              <p class="name avatarname">{{user.name}}</p>
             </div>
             <sapn class="username"></sapn>
             <!--下拉箭头-->
+  <el-dropdown trigger="click" @command="setDialogInfo">
+  <span class="el-dropdown-link">
+  <i class="el-icon-caret-bottom el-icon--right"></i>
+  </span>
+  <el-dropdown-menu slot="dropdown">
+    <el-dropdown-item command="info">个人信息</el-dropdown-item>
+    <el-dropdown-item command="logout">退出</el-dropdown-item>
+  </el-dropdown-menu>
+</el-dropdown>
           </div>
       </el-col>
     </el-row>
@@ -21,7 +30,38 @@
 </template>
 <script>
 export default {
-  name: 'head-nav'
+  name: 'head-nav',
+  computed:{
+    user(){
+      return this.$store.getters.user
+    }
+  },
+  methods:{
+    setDialogInfo(cmdItem){
+         //console.log(cmdItem);
+          switch(cmdItem){
+            case "info":
+              this.showInfoList()
+              break
+              case "logout":
+              this.logout()
+              break
+          }
+    },
+    showInfoList(){
+      console.log('个人信息');
+      
+    },
+    logout(){
+      //console.log('退出')
+      //清除token
+      localStorage.removeItem('eleToken')
+      //设置vuex store
+      this.$store.dispatch('clearCurrentState')
+      //跳转
+      this.$router.push('/login')
+    }
+  }
 }
 </script>
 <style scoped>
