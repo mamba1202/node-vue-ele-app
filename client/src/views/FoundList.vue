@@ -1,5 +1,15 @@
 <template>
 <div class="fillContainer">
+  <div>
+    <el-form :inline="true" ref="add_data">
+       <el-form-item class="btnRight">
+          <el-button type="primary" size="small" icon="view" @click="handleAdd()">
+            添加
+          </el-button>
+       </el-form-item>
+    </el-form>
+  </div>
+  <div class="table_container">
 <el-table
 v-if="tableData.length > 0"
 :data="tableData"
@@ -89,14 +99,32 @@ style="width: 100%">
     </el-table-column>
 </el-table>
 </div>
+
+<Dialog :dialog="dialog" :formData="formData" @updata="getProfile"></Dialog>
+</div>
 </template>
 <script>
+import Dialog from '../components/Dialog'
 export default {
    name: "foundList",
    data(){
        return{
-       tableData:[]
-       }    
+       tableData:[],
+       formData: {
+        type: "",
+        describe: "",
+        income: "",
+        expend: "",
+        cash: "",
+        remark: "",
+        id: ""
+      },
+       dialog:{
+         show: false,
+         option: 'edit',
+         title: ''
+       } 
+       }
    },
    created(){
        this.getProfile()
@@ -112,13 +140,64 @@ export default {
            })
        },
       handleEdit(index,row){
-             
+            //编辑
+            this.dialog={
+              show: true,
+              title: '修改资金信息',
+              option: 'edit'
+            } 
+            this.formData={
+              type: row.type,
+              describe: row.describe,
+              income: row.income,
+              expend: row.expend,
+              cash: row.cash,
+              remark: row.remark,
+              id: row._id
+            }
       },
       handleDelete(index,row){
-
+              this.$axios.delete(`api/profiles/delete/${row._id}`)
+              .then(res=>{
+                  this.$message('删除成功')
+                  this.getProfile()
+              })
+      },
+      handleAdd(){
+        //this.dialog.show = true
+        this.dialog={
+              show: true,
+              title: '修改资金信息',
+              option: 'add'
+            } 
+            this.formData={
+              type: '',
+              describe:'',
+              income: '',
+              expend: '',
+              cash: '',
+              remark: '',
+              id: ''
+            }
       }
+   },
+   components:{
+     Dialog
    }
 }
 </script>
-<style>
+<style scoped>
+.fillcontainer {
+  width: 100%;
+  height: 100%;
+  padding: 16px;
+  box-sizing: border-box;
+}
+.btnRight {
+  float: right;
+}
+.pagination {
+  text-align: right;
+  margin-top: 10px;
+}
 </style>
