@@ -1,38 +1,40 @@
 <template>
-    <div class="infoshow">
+   <div class="infoShow"  @mousewheel.prevent>
        <el-row type="flex" class="row-bg" justify="center">
-           <el-col :span='8'>
+           <el-col :span="8">
                <div class="user">
-                    <img :src="user.avatar" class='avatar' alt="">
+                   <img :src="user.avatar" class="avatar">
                </div>
            </el-col>
-           <el-col :span='16'>
-               <div class="userinfo">
-                  <div class="user-item">
-                    <i class="fa fa-user"></i>
-                   <span>{{user.name}}</span>
-                  </div>
-                  <div class="user-item">
-                    <i class="fa fa-cog"></i>
-                    <span>{{user.identity == 'manager' ? '管理员' : '普通员工'}}</span>
-                  </div>
+           <el-col :span="16">
+               <div class="userInfo">
+                   <div class="user-item">
+                       <i class="fa fa-user"></i>
+                       <span>{{user.name}}</span>
+                   </div>
+                   <div class="user-item">
+                       <i class="fa fa-cog"></i>
+                       <span>{{user.identity === "manager" ? '管理员' : '普通员工'}}</span>
+                   </div>
                </div>
            </el-col>
        </el-row>
-    </div>
+   </div>
 </template>
+
 <script>
-export default {
-  name: "infoshow",
-  computed: {
-    user() {
-      return this.$store.getters.user;
+    export default {
+        name:'infoShow',
+        computed: {
+            user(){
+                return this.$store.getters.user
+            }
+        },
     }
-  }
-};
 </script>
+
 <style scoped>
-.infoshow {
+.infoShow {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
@@ -49,7 +51,6 @@ export default {
 }
 .user img {
   width: 150px;
-  width: 150px;
   border-radius: 50%;
 }
 .user span {
@@ -59,7 +60,7 @@ export default {
   font-size: 20px;
   font-weight: bold;
 }
-.userinfo {
+.userInfo {
   height: 100%;
   background-color: #eee;
 }
@@ -71,3 +72,4 @@ export default {
   color: #333;
 }
 </style>
+

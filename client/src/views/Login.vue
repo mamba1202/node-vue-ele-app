@@ -1,96 +1,95 @@
 <template>
     <div class="login">
-        <section class="form_container">
-            <div class="manage_tip">
+        <section class="form-container">
+            <div class="manage-tip">
                 <span class="title">在线后台管理系统</span>
+                <el-form :model="loginUser" :rules="rules" ref="loginForm" label-width="60px" class="loginForm" >
+                    <el-form-item label="邮箱" prop="email">
+                        <el-input v-model="loginUser.email" placeholder="请输入email"></el-input>
+                    </el-form-item>
+                    <el-form-item label="密码" prop="password">
+                        <el-input type="password" v-model="loginUser.password" placeholder="请输入密码"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" class="submit-btn" @click="submitForm('loginForm')">登录</el-button>
+                    </el-form-item>
+                    <div class="tiparea">
+                        <p>还没有账号？现在<router-link to="/register">注册</router-link></p>
+                    </div>    
+                </el-form>
             </div>
-            <el-form :model="loginUser" :rules="rules" ref="loginForm" class="loginForm" label-width="60px">
-                <el-form-item label="邮箱" prop="email">
-                    <el-input v-model="loginUser.email" placeholder="请输入邮箱"></el-input>
-                </el-form-item>
-                <el-form-item label="密码" prop="password">
-                    <el-input v-model="loginUser.password" placeholder="请输入密码" type="password"></el-input>
-                </el-form-item>
-                <el-form-item>
-                    <el-button type="primary"  @click="submitForm('loginForm')" class="submit_btn">登  录</el-button>
-                </el-form-item>
-                <div class="tiparea">
-                    <p>还没有账号？现在<router-link to='/register'>注册</router-link></p>
-                </div>
-            </el-form>
         </section>
     </div>
 </template>
+
 <script>
-import jwt from "jwt-decode";
+import jwt_decode from 'jwt-decode'
 export default {
     name: "login",
-    components:{},
     data(){
         return{
-           loginUser:{
-              email: '',
-              password: '',
+            loginUser:{
+                email:"",
+                password:""
             },
             rules:{
-                email: [{
-                    type: 'email',
-                    required: true,
-                    message: "邮箱格式不正确",
-                    tirgger: "blur"
-                }],
-                password: [
-                {
-                    required: true,
-                    message: '密码不能为空',
-                    tirgger: 'blur'
-                },
-                {
-                    min: 6,
-                    max: 30,
-                    message: "长度在6-30之间",
-                    tirgger: 'blur'
-                }
+                email:[
+                    {   type:"email",
+                        required:true,
+                        message:"邮箱格式不正确",
+                        trigger:"blur",
+                    },
                 ],
+                password:[
+                    {
+                        required:true,
+                        message:"密码不能为空",
+                        trigger:"blur"
+                    },
+                    {
+                        min:6,
+                        max:18,
+                        message:"密码长度为6-18个字符"
+                    }
+                ]
             }
         }
     },
-    methods:{
+    methods: {
         submitForm(formName) {
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-           this.$axios.post('/api/users/login',this.loginUser)
-           .then(res=>{
-              //拿到token
-              const {token} = res.data
+            this.$refs[formName].validate((valid) => {
+                if (valid) {
+                    this.$axios
+                        .post("/api/users/login", this.loginUser)
+                        .then(res=>{
+                            //token
+                            const {token} = res.data
+                            localStorage.setItem('eleToken',token)
+                            // 引入jwt_decode 解析token
+                            const decoded = jwt_decode(token)
 
-              //存储到ls
-              localStorage.setItem("eleToken", token)
+                            // token存储在Vuex中
+                            this.$store.dispatch("setAuthenticated",!this.isEmpty(decoded))
+                            this.$store.dispatch("setUser",decoded)
 
-              //解析token 
-              const decode = jwt_decode(token)
-              //console.log(decode)
-
-              //token存储的vuex中
-              this.$store.dispatch("setAuthenticated", !this.isEmpty(decode))
-              this.$store.dispatch("setUser", decode)
-
-              this.$router.push('/index')
-           })
-          }
-        });
-      },
-      isEmpty(value) {
-      return (
-        value === undefined ||
-        value === null ||
-        (typeof value === "object" && Object.keys(value).length === 0) ||
-        (typeof value === "string" && value.trim().length === 0)
-      );
+                            this.$router.push('/index')
+                        })
+                }
+            });
+        },
+        isEmpty(value){
+            return (
+                value === undefined ||
+                value === null ||
+                (typeof value === "object" && Object.keys(value).length === 0) ||
+                (typeof value === "string" && value.trim().length === 0 )
+            )
+        }
     }
-}
-}
+};
 </script>
+
+
 <style scoped>
 .login {
   position: relative;
@@ -99,7 +98,7 @@ export default {
   background: url(../assets/bg.jpg) no-repeat center center;
   background-size: 100% 100%;
 }
-.form_container {
+.form-container {
   width: 370px;
   height: 210px;
   position: absolute;
@@ -109,7 +108,7 @@ export default {
   border-radius: 5px;
   text-align: center;
 }
-.form_container .manage_tip .title {
+.form-container .manage-tip .title {
   font-family: "Microsoft YaHei";
   font-weight: bold;
   font-size: 26px;
@@ -123,7 +122,7 @@ export default {
   box-shadow: 0px 5px 10px #cccc;
 }
 
-.submit_btn {
+.submit-btn {
   width: 100%;
 }
 .tiparea {
@@ -135,4 +134,3 @@ export default {
   color: #409eff;
 }
 </style>
-
